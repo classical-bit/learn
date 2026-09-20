@@ -1,5 +1,6 @@
 from collections.abc import Callable
 
+
 def doc_format_checker_and_converter(
     conversion_function: Callable[[str], str], valid_formats: list[str]
 ) -> Callable[[str, str], str]:
