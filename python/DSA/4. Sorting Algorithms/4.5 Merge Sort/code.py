@@ -20,18 +20,18 @@ def merge(first: list[int], second: list[int]) -> list[int]:
     while a < len(first) and b < len(second):
         if first[a] < second[b]:
             final.append(first[a])
-            a = a + 1
+            a += 1
         else:
             final.append(second[b])
-            b = b + 1
+            b += 1
 
     while a < len(first):
         final.append(first[a])
-        a = a + 1
+        a += 1
 
     while b < len(second):
         final.append(second[b])
-        b = b + 1
+        b += 1
 
     return final
 
