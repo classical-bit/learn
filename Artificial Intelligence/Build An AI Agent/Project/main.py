@@ -15,16 +15,25 @@ client = OpenAI(
 )
 
 def main():
+    user_prompt = "How is the weather in Bangalore? Answer in a statement."
     response = client.chat.completions.create(
         model="openrouter/free",
         messages=[
             {
                 "role": "user",
-                "content": "Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum.",
+                "content": user_prompt,
             }
         ],
     )
-    print(response.choices[0].message.content)
+
+    if response.usage == None:
+        raise RuntimeError("OpenRouter response usage is None!")
+
+
+    print(f"User Prompt: {user_prompt}")
+    print(f"Prompt Tokens: {response.usage.prompt_tokens}")
+    print(f"Response Tokens: {response.usage.completion_tokens}")
+    print(f"Response: \n{response.choices[0].message.content}")
 
 
 if __name__ == "__main__":
