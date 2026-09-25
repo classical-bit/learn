@@ -2,6 +2,9 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 import argparse
+from openai.types.chat.chat_completion import ChatCompletion
+from openai.types.chat.chat_completion_message_param import ChatCompletionMessageParam
+from typing_extensions import Iterable
 
 
 parser = argparse.ArgumentParser(description="Chatbot")
@@ -14,21 +17,17 @@ api_key = os.environ.get("OPENROUTER_API_KEY")
 if api_key == None:
     raise RuntimeError("OPENROUTER_API_KEY is None!")
 
-client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=api_key
-)
-
 def main():
-    response = client.chat.completions.create(
-        model="openrouter/free",
-        messages=[
-            {
-                "role": "user",
-                "content": args.user_prompt,
-            }
-        ],
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=api_key
     )
+
+    messages: Iterable[ChatCompletionMessageParam] = [
+        {"role": "user", "content": args.user_prompt},
+    ]
+
+    response = generate_content(client, messages)
 
     if response.usage == None:
         raise RuntimeError("OpenRouter response usage is None!")
@@ -39,6 +38,12 @@ def main():
     print(f"Response Tokens: {response.usage.completion_tokens}")
     print(f"Response: \n{response.choices[0].message.content}")
 
+
+def generate_content(client: OpenAI, messages: Iterable[ChatCompletionMessageParam]) -> ChatCompletion:
+    return client.chat.completions.create(
+        model="openrouter/free",
+        messages=messages,
+    )
 
 if __name__ == "__main__":
     main()
