@@ -9,6 +9,7 @@ from typing_extensions import Iterable
 
 parser = argparse.ArgumentParser(description="Chatbot")
 parser.add_argument("user_prompt", type=str, help="User prompt")
+parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
 args = parser.parse_args()
 
 load_dotenv()
@@ -28,15 +29,7 @@ def main():
     ]
 
     response = generate_content(client, messages)
-
-    if response.usage == None:
-        raise RuntimeError("OpenRouter response usage is None!")
-
-
-    print(f"User Prompt: {args.user_prompt}")
-    print(f"Prompt Tokens: {response.usage.prompt_tokens}")
-    print(f"Response Tokens: {response.usage.completion_tokens}")
-    print(f"Response: \n{response.choices[0].message.content}")
+    print_response(response)
 
 
 def generate_content(client: OpenAI, messages: Iterable[ChatCompletionMessageParam]) -> ChatCompletion:
@@ -44,6 +37,19 @@ def generate_content(client: OpenAI, messages: Iterable[ChatCompletionMessagePar
         model="openrouter/free",
         messages=messages,
     )
+
+
+def print_response(response: ChatCompletion) -> None:
+    if response.usage == None:
+        raise RuntimeError("OpenRouter response usage is None!")
+
+    if args.verbose:
+        print(f"User Prompt: {args.user_prompt}")
+        print(f"Prompt Tokens: {response.usage.prompt_tokens}")
+        print(f"Response Tokens: {response.usage.completion_tokens}")
+
+    print(f"Response: \n{response.choices[0].message.content}")
+
 
 if __name__ == "__main__":
     main()
